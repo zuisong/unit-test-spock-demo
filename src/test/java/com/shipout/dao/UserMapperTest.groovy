@@ -55,7 +55,7 @@ class UserMapperTest extends Specification {
 
         def user = Stub(User)
         when:
-        userMapper.insert(user)
+        userMapper.insertUser(user)
         then:
         userMapper.selectList(null).size() == 1
     }

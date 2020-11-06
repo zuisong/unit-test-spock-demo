@@ -10,4 +10,13 @@ public interface UserMapper extends BaseMapper<User> {
 
     void batchSaveUser(@Param("userList") List<User> userList);
 
+    default void insertUser(@Param("user") User user) {
+        if (user == null) {
+            return;
+        } else {
+            insertUserNotNull(user);
+        }
+    }
+
+    void insertUserNotNull(User user);
 }

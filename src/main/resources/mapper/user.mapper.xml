@@ -8,7 +8,11 @@
         <foreach collection="userList" open=" " close=" " item="user" separator=",">
             ( #{user.name} )
         </foreach>
-
     </insert>
+    <insert id="insertUserNotNull">
+        insert into t_user (name)
+        values (#{name})
+    </insert>
+
 
 </mapper>
