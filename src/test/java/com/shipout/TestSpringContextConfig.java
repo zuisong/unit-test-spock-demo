@@ -2,7 +2,6 @@ package com.shipout;
 
 import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.zaxxer.hikari.HikariDataSource;
-import org.h2.Driver;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,8 +56,8 @@ public class TestSpringContextConfig {
 
         HikariDataSource dataSource = new HikariDataSource();
 
-        dataSource.setJdbcUrl("jdbc:h2:mem:c11n;MODE=mysql;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE");
-        dataSource.setDriverClassName(Driver.class.getName());
+        dataSource.setJdbcUrl("jdbc:p6spy:h2:mem:c11n;MODE=mysql;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE");
+        dataSource.setDriverClassName(com.p6spy.engine.spy.P6SpyDriver.class.getName());
         dataSource.setUsername("sa");
         dataSource.setPassword("");
 

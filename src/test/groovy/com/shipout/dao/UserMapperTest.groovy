@@ -1,5 +1,7 @@
 package com.shipout.dao
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
 import com.shipout.TestSpringContextConfig
 import com.shipout.entity.User
 import groovy.sql.Sql
@@ -9,19 +11,28 @@ import spock.lang.Shared
 import spock.lang.Specification
 import spock.lang.Subject
 
+import javax.sql.DataSource
+
 @ContextConfiguration(classes = TestSpringContextConfig)
 @Subject(UserMapper)
 class UserMapperTest extends Specification {
 
-    @Shared
-    Sql sql = Sql.newInstance("jdbc:h2:mem:c11n;MODE=mysql;", "sa", "", "org.h2.Driver")
 
+    ObjectMapper objectMapper = new ObjectMapper()
+            .enable(SerializationFeature.INDENT_OUTPUT)
 
     @Autowired
+    DataSource dataSource
+    @Autowired
     UserMapper userMapper;
+    @Shared
+    Sql sql
 
     def setup() {
+        sql = new Sql(dataSource)
+
         println "------- setup"
+        println dataSource
         sql.execute("""
         truncate table t_user;
     """)
@@ -29,6 +40,7 @@ class UserMapperTest extends Specification {
 
 
     def setupSpec() {
+
         // 设置每个测试类的环境
         // 每个测试类初始化时会被执行一遍
         println("-------- setupSpec")
@@ -57,7 +69,9 @@ class UserMapperTest extends Specification {
         when:
         userMapper.insertUser(user)
         then:
-        userMapper.selectList(null).size() == 1
+        def rows = sql.rows("select * from t_user")
+        rows.size() == 1
+        println objectMapper.writeValueAsString(rows)
     }
 
     def "查询数据测试"() {
@@ -88,9 +102,7 @@ class UserMapperTest extends Specification {
         userMapper.batchSaveUser([user1, user2, user3])
 
         then:
-        def list = userMapper.selectList(null)
-        println(list)
-        list.size() == 3
+        sql.firstRow("select count(*) from t_user ")[0] == 3
 
     }
 

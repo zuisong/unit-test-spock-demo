@@ -15,8 +15,6 @@
  */
 package com.shipout.base;
 
-import lombok.Data;
-
 import java.io.Serializable;
 import java.util.Optional;
 
@@ -26,7 +24,6 @@ import java.util.Optional;
  * @author hubin
  * @since 2018-06-05
  */
-@Data
 public class R<T> implements Serializable {
 
     /**
@@ -97,5 +94,64 @@ public class R<T> implements Serializable {
             throw new ApiException(this.msg);
         }
         return data;
+    }
+
+    public long getCode() {
+        return this.code;
+    }
+
+    public T getData() {
+        return this.data;
+    }
+
+    public String getMsg() {
+        return this.msg;
+    }
+
+    public void setCode(long code) {
+        this.code = code;
+    }
+
+    public void setData(T data) {
+        this.data = data;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
+    public boolean equals(final Object o) {
+        if (o == this) return true;
+        if (!(o instanceof R)) return false;
+        final R<?> other = (R<?>) o;
+        if (!other.canEqual((Object) this)) return false;
+        if (this.getCode() != other.getCode()) return false;
+        final Object this$data = this.getData();
+        final Object other$data = other.getData();
+        if (this$data == null ? other$data != null : !this$data.equals(other$data)) return false;
+        final Object this$msg = this.getMsg();
+        final Object other$msg = other.getMsg();
+        if (this$msg == null ? other$msg != null : !this$msg.equals(other$msg)) return false;
+        return true;
+    }
+
+    protected boolean canEqual(final Object other) {
+        return other instanceof R;
+    }
+
+    public int hashCode() {
+        final int PRIME = 59;
+        int result = 1;
+        final long $code = this.getCode();
+        result = result * PRIME + (int) ($code >>> 32 ^ $code);
+        final Object $data = this.getData();
+        result = result * PRIME + ($data == null ? 43 : $data.hashCode());
+        final Object $msg = this.getMsg();
+        result = result * PRIME + ($msg == null ? 43 : $msg.hashCode());
+        return result;
+    }
+
+    public String toString() {
+        return "R(code=" + this.getCode() + ", data=" + this.getData() + ", msg=" + this.getMsg() + ")";
     }
 }
