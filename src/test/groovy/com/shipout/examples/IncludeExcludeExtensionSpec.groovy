@@ -1,4 +1,9 @@
 package com.shipout.examples
+
+import spock.lang.*
+
+import java.lang.annotation.*
+
 /*
  * Copyright 2010 the original author or authors.
  *
@@ -12,11 +17,6 @@ package com.shipout.examples
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import java.lang.annotation.*
-
-import spock.lang.Specification
-
 /**
  * Shows how methods can be included and excluded from a spec run. For
  * demonstration purposes, the configuration script's location is set
@@ -48,22 +48,22 @@ import spock.lang.Specification
  * @since 0.4
  */
 class IncludeExcludeExtensionSpec extends Specification {
-  @Fast
-  def "a fast method"() {
-    println "fast"
-    expect: true
-  }
+    @Fast
+    def "a fast method"() {
+        println "fast"
+        expect: true
+    }
 
-  @Slow
-  def "a slow method"() {
-    println "slow"
-    expect: true
-  }
+    @Slow
+    def "a slow method"() {
+        println "slow"
+        expect: true
+    }
 
-  def "a neither fast nor slow method"() {
-    println "neither fast nor slow"
-    expect: true
-  }
+    def "a neither fast nor slow method"() {
+        println "neither fast nor slow"
+        expect: true
+    }
 }
 
 @Retention(RetentionPolicy.RUNTIME)

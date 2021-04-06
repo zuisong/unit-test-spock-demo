@@ -14,16 +14,16 @@
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!--设置按天来滚动，前一天日志打印到23点59分，然后就一直没有请求日志，直到次日的1点才有新的日志进入。
                     在0点到1点这个时间段，日志文件是不会滚动生成新的日志文件。因为滚动的动作是需要日志写入动作来触发。-->
-            <fileNamePattern>log/log-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>logs/log-%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>30</maxHistory>
         </rollingPolicy>
     </appender>
-    <logger name="p6spy" level="INFO" additivity="false">
-        <appender-ref ref="CONSOLE"/>
-        <appender-ref ref="File"/>
-    </logger>
-    <root level="ERROR">
-        <appender-ref ref="CONSOLE"/>
+    <root level="INFO">
+        <appender-ref ref="FILE"/>
     </root>
+    <logger level="ERROR">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </logger>
 
 </configuration>

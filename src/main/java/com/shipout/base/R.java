@@ -124,15 +124,14 @@ public class R<T> implements Serializable {
         if (o == this) return true;
         if (!(o instanceof R)) return false;
         final R<?> other = (R<?>) o;
-        if (!other.canEqual((Object) this)) return false;
+        if (!other.canEqual(this)) return false;
         if (this.getCode() != other.getCode()) return false;
         final Object this$data = this.getData();
         final Object other$data = other.getData();
         if (this$data == null ? other$data != null : !this$data.equals(other$data)) return false;
         final Object this$msg = this.getMsg();
         final Object other$msg = other.getMsg();
-        if (this$msg == null ? other$msg != null : !this$msg.equals(other$msg)) return false;
-        return true;
+        return this$msg == null ? other$msg == null : this$msg.equals(other$msg);
     }
 
     protected boolean canEqual(final Object other) {

@@ -1,12 +1,10 @@
 package com.shipout.service
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.shipout.dao.UserMapper
-import com.shipout.entity.User
-import org.springframework.data.redis.core.StringRedisTemplate
-import org.springframework.data.redis.core.ValueOperations
-import spock.lang.Specification
-import spock.lang.Subject
+import com.fasterxml.jackson.databind.*
+import com.shipout.dao.*
+import com.shipout.entity.*
+import org.springframework.data.redis.core.*
+import spock.lang.*
 
 @Subject(Userservice)
 class UserserviceTest extends Specification {
@@ -19,7 +17,7 @@ class UserserviceTest extends Specification {
             userMapper: userMapper,
             stringRedisTemplate: stringRedisTemplate,
             objectMapper: new ObjectMapper()
-    );
+    )
 
     def "测试查询用户"() {
 

@@ -1,17 +1,14 @@
 package com.shipout.dao
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.shipout.TestSpringContextConfig
-import com.shipout.entity.User
-import groovy.sql.Sql
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.test.context.ContextConfiguration
-import spock.lang.Shared
-import spock.lang.Specification
-import spock.lang.Subject
+import com.fasterxml.jackson.databind.*
+import com.shipout.*
+import com.shipout.entity.*
+import groovy.sql.*
+import org.springframework.beans.factory.annotation.*
+import org.springframework.test.context.*
+import spock.lang.*
 
-import javax.sql.DataSource
+import javax.sql.*
 
 @ContextConfiguration(classes = TestSpringContextConfig)
 @Subject(UserMapper)
@@ -23,8 +20,9 @@ class UserMapperTest extends Specification {
 
     @Autowired
     DataSource dataSource
+
     @Autowired
-    UserMapper userMapper;
+    UserMapper userMapper
     @Shared
     Sql sql
 
@@ -32,7 +30,6 @@ class UserMapperTest extends Specification {
         sql = new Sql(dataSource)
 
         println "------- setup"
-        println dataSource
         sql.execute("""
         truncate table t_user;
     """)
@@ -101,8 +98,10 @@ class UserMapperTest extends Specification {
         when:
         userMapper.batchSaveUser([user1, user2, user3])
 
+
         then:
-        sql.firstRow("select count(*) from t_user ")[0] == 3
+        def row = sql.firstRow("select count(*) as count from t_user ")
+        row.count == 3
 
     }
 

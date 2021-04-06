@@ -1,4 +1,7 @@
 package com.shipout.examples
+
+import spock.lang.*
+
 /*
  * Copyright 2010 the original author or authors.
  *
@@ -12,9 +15,6 @@ package com.shipout.examples
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-import spock.lang.*
-
 /**
  * The expected order of interactions can now be specified by using multiple
  * then-blocks. Interactions in a later then-block must take place after
@@ -24,23 +24,27 @@ import spock.lang.*
  * @since 0.4
  */
 class OrderedInteractionsSpec extends Specification {
-  def "collaborators must be invoked in order"() {
-    def coll1 = Mock(Collaborator)
-    def coll2 = Mock(Collaborator)
+    def "collaborators must be invoked in order"() {
+        def coll1 = Mock(Collaborator) {
+            collaborate() >> "1"
+        }
+        def coll2 = Mock(Collaborator) {
+            collaborate() >> "2"
+        }
 
-    when:
-    // try to reverse the order of these invocations and see what happens
-    coll1.collaborate()
-    coll2.collaborate()
+        when:
+        // try to reverse the order of these invocations and see what happens
+        coll1.collaborate()
+        coll2.collaborate()
 
-    then:
-    1 * coll1.collaborate()
+        then:
+        1 * coll1.collaborate()
 
-    then:
-    1 * coll2.collaborate()
-  }
+        then:
+        1 * coll2.collaborate()
+    }
 }
 
 interface Collaborator {
-  def collaborate()
+    def collaborate()
 }
