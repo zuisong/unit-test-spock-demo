@@ -2,7 +2,7 @@ package com.shipout.controller;
 
 import com.shipout.base.R;
 import com.shipout.entity.User;
-import com.shipout.service.Userservice;
+import com.shipout.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,13 +14,13 @@ public class UserController {
 
 
     @Autowired
-    private Userservice userservice;
+    private UserService userService;
 
 
     @GetMapping("/list")
     public R<List<User>> getUserList() {
 
-        List<User> userList = userservice.getUserList();
+        List<User> userList = userService.getUserList();
 
         return R.ok(userList);
 
@@ -30,11 +30,14 @@ public class UserController {
     @GetMapping("/getById")
     public R<User> getUserById(Integer id) {
 
-        User user = userservice.findUserById(id);
+        User user = userService.findUserById(id);
 
         return R.ok(user);
 
     }
-
+    @PostMapping("/addUser")
+    R<User> getUserById(@RequestBody User user) {
+        return R.ok(null);
+    }
 
 }

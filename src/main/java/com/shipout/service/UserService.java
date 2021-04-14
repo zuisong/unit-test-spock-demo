@@ -13,7 +13,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 @Service
-public class Userservice {
+public class UserService {
 
     @Autowired
     private UserMapper userMapper;

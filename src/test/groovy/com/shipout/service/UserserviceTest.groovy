@@ -6,14 +6,14 @@ import com.shipout.entity.*
 import org.springframework.data.redis.core.*
 import spock.lang.*
 
-@Subject(Userservice)
+@Subject(UserService)
 class UserserviceTest extends Specification {
 
     StringRedisTemplate stringRedisTemplate = Mock()
 
     UserMapper userMapper = Mock()
 
-    Userservice userservice = new Userservice(
+    UserService userservice = new UserService(
             userMapper: userMapper,
             stringRedisTemplate: stringRedisTemplate,
             objectMapper: new ObjectMapper()
