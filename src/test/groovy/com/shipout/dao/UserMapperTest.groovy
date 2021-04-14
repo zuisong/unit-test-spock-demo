@@ -1,16 +1,18 @@
 package com.shipout.dao
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page
 import com.fasterxml.jackson.databind.*
 import com.shipout.*
 import com.shipout.entity.*
 import groovy.sql.*
 import org.springframework.beans.factory.annotation.*
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer
 import org.springframework.test.context.*
 import spock.lang.*
 
 import javax.sql.*
 
-@ContextConfiguration(classes = TestSpringContextConfig)
+@ContextConfiguration(classes = TestSpringContextConfig, initializers = ConfigDataApplicationContextInitializer)
 @Subject(UserMapper)
 class UserMapperTest extends Specification {
 
@@ -80,14 +82,15 @@ class UserMapperTest extends Specification {
         """)
 
         when:
-        def users = userMapper.selectByMap(["name": "zhangsan"])
+        Page<User> users = userMapper.selectPage(new Page<>(1, 10), null)
 
         then:
         println(users)
-        users.size() == 1
-        users.get(0).name == 'zhangsan'
+        users.total == 2
+        users.records.size() == 2
 
     }
+
 
     def "批量插入测试"() {
         setup:

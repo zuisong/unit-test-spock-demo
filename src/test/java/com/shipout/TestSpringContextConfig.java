@@ -1,94 +1,80 @@
 package com.shipout;
 
-import com.baomidou.mybatisplus.core.MybatisConfiguration;
+import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.autoconfigure.MybatisPlusAutoConfiguration;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
-import com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import org.apache.ibatis.plugin.Interceptor;
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.autoconfigure.gson.GsonAutoConfiguration;
+import org.springframework.boot.autoconfigure.h2.H2ConsoleAutoConfiguration;
+import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
+import org.springframework.boot.autoconfigure.jooq.JooqAutoConfiguration;
+import org.springframework.boot.autoconfigure.transaction.TransactionAutoConfiguration;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
-import java.io.IOException;
-
-import static org.springframework.core.io.support.ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX;
 
 /**
  * 单元测试专属 spring 容器配置
  * 专为 mybatis 启用
  */
 @MapperScan(basePackages = {"com.shipout.dao"})
-@EnableTransactionManagement
+@Configuration
+@EnableConfigurationProperties({
+        DataSourceProperties.class
+})
 public class TestSpringContextConfig {
 
-    @Autowired
-    private DataSource dataSource;
+    @ImportAutoConfiguration(classes = {
+            DataSourceAutoConfiguration.class,
+            MybatisPlusAutoConfiguration.class,
+            TransactionAutoConfiguration.class,
+            JacksonAutoConfiguration.class,
+            GsonAutoConfiguration.class,
+            JooqAutoConfiguration.class,
+    })
+    @Configuration
+    static class AutoConfig {
 
-    // 配置mybatis
-    @Bean
-    public MybatisSqlSessionFactoryBean mybatisSqlSessionFactoryBean() throws IOException {
-
-        MybatisSqlSessionFactoryBean sessionFactoryBean = new MybatisSqlSessionFactoryBean();
-
-        String packageXMLConfigPath = CLASSPATH_ALL_URL_PREFIX + "/mapper/**/*.xml";
-
-        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-
-        sessionFactoryBean.setMapperLocations(resolver.getResources(packageXMLConfigPath));
-        MybatisConfiguration configuration = new MybatisConfiguration();
-        configuration.setMapUnderscoreToCamelCase(false);
-        sessionFactoryBean.setConfiguration(configuration);
-        sessionFactoryBean.setDataSource(dataSource);
-
-        MybatisPlusInterceptor mybatisPlusInterceptor = new MybatisPlusInterceptor();
-        mybatisPlusInterceptor.addInnerInterceptor(paginationInterceptor());
-        Interceptor[] plugins = {mybatisPlusInterceptor};
-        sessionFactoryBean.setPlugins(plugins);
-
-        return sessionFactoryBean;
     }
 
-    public PaginationInnerInterceptor paginationInterceptor() {
-        // 开启 count 的 join 优化,只针对 left join !!!
-        PaginationInnerInterceptor interceptor = new PaginationInnerInterceptor();
+
+    /**
+     * 新的分页插件,一缓和二缓遵循mybatis的规则,需要设置 MybatisConfiguration#useDeprecatedExecutor = false 避免缓存出现问题(该属性会在旧插件移除后一同移除)
+     */
+    @Bean
+    public MybatisPlusInterceptor mybatisPlusInterceptor() {
+        MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
+        interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.H2));
         return interceptor;
     }
 
-    // 数据源初始化
-    @Bean
-    public DataSource dataSource() {
-        HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:h2:mem:c11n;MODE=mysql;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE");
-        config.setDriverClassName("org.h2.Driver");
-        config.setUsername("sa");
-        config.setPassword("");
-
-        return new HikariDataSource(config);
-    }
+    @Autowired
+    DataSource dataSource;
 
     @Bean
-    DataSourceInitializer dataSourceInitializer(
+    public DataSourceInitializer dataSourceInitializer(
             @Value("classpath:schema-h2.sql") Resource schemaScript
     ) {
         DataSourceInitializer initializer = new DataSourceInitializer();
         initializer.setDataSource(dataSource);
         initializer.setDatabasePopulator(new ResourceDatabasePopulator(schemaScript));
         return initializer;
-    }
-
-    @Bean
-    public DataSourceTransactionManager transactionManager() {
-        return new DataSourceTransactionManager(dataSource);
     }
 
 }

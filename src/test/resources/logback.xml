@@ -2,28 +2,12 @@
 <configuration>
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{yyyy-MM dd_HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+            <pattern>%d{yyyy-MM-dd_HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
 
-    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
-            <charset>utf-8</charset>
-        </encoder>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!--设置按天来滚动，前一天日志打印到23点59分，然后就一直没有请求日志，直到次日的1点才有新的日志进入。
-                    在0点到1点这个时间段，日志文件是不会滚动生成新的日志文件。因为滚动的动作是需要日志写入动作来触发。-->
-            <fileNamePattern>logs/log-%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>30</maxHistory>
-        </rollingPolicy>
-    </appender>
-    <root level="INFO">
-        <appender-ref ref="FILE"/>
-    </root>
-    <logger level="ERROR">
+    <root level="DEBUG">
         <appender-ref ref="CONSOLE"/>
-        <appender-ref ref="FILE"/>
-    </logger>
+    </root>
 
 </configuration>
