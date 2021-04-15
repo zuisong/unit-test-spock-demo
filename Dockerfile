@@ -5,12 +5,15 @@ USER root
 RUN mkdir -p /mydata
 COPY . /mydata
 WORKDIR /mydata
-RUN mvn clean test -q
+RUN mvn clean test package -DfinalName=app -q
+
 # 构建完毕
-#FROM frolvlad/alpine-java:jre8-slim
-#MAINTAINER zuisong
-#VOLUME /data
-#WORKDIR /data
-#COPY --from=builder /mydata/target/app.jar /home/app.jar
-#EXPOSE 8080
-#CMD ["java","-jar","/home/app.jar"]
+FROM frolvlad/alpine-java:jre8-slim
+MAINTAINER zuisong
+USER root
+RUN mkdir -p /data
+VOLUME /data
+WORKDIR /data
+COPY --from=builder /mydata/target/app.jar /home/app.jar
+EXPOSE 8080
+CMD ["java","-jar","/home/app.jar"]
