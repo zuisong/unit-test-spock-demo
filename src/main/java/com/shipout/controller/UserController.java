@@ -36,7 +36,7 @@ public class UserController {
 
     }
     @PostMapping("/addUser")
-    R<User> getUserById(@RequestBody User user) {
+    R<User> addUser(@RequestBody User user) {
         return R.ok(null);
     }
 

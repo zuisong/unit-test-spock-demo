@@ -18,6 +18,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*
 
 class UserControllerTest extends Specification {
     UserService userService = Mock(UserService)
+
     MockMvc mockMvc = standaloneSetup(new UserController(userService: userService)).build()
 
     ObjectMapper mapper = new ObjectMapper()
@@ -56,12 +57,10 @@ class UserControllerTest extends Specification {
 
         client.post()
                 .uri("/user/addUser")
-
                 .bodyValue(mapper.writeValueAsString(new User()))
                 .headers {
                     it.setContentType(MediaType.APPLICATION_JSON)
                 }
-
                 .exchange()
                 .expectStatus().is2xxSuccessful()
                 .expectBody().jsonPath('$.code').isEqualTo(0)

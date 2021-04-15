@@ -12,13 +12,16 @@ import spock.lang.*
 
 import javax.sql.*
 
-@ContextConfiguration(classes = TestSpringContextConfig, initializers = ConfigDataApplicationContextInitializer)
+@TestPropertySource(
+        properties = ["spring.config.location: classpath:application-unittest.yml"])
+@ContextConfiguration(
+        classes = TestSpringContextConfig,
+        initializers = ConfigDataApplicationContextInitializer)
 @Subject(UserMapper)
 class UserMapperTest extends Specification {
 
-
-    ObjectMapper objectMapper = new ObjectMapper()
-            .enable(SerializationFeature.INDENT_OUTPUT)
+    @Autowired
+    ObjectMapper objectMapper
 
     @Autowired
     DataSource dataSource
