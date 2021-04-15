@@ -1,0 +1,8 @@
+version: "3.0"
+services:
+  img:
+    build: .
+    volumes:
+      - $PWD:/data
+    ports:
+      - 8080:8080
