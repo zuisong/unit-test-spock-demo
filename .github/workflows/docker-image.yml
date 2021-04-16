@@ -12,4 +12,14 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build the Docker image
-      run: docker-compose build
+      run: docker run -t --rm -v $PWD:/data -w /data maven:3-openjdk-8-slim mvn clean test
+    - name: list dir
+      run: ls -R
+    - name: Add coverage to PR
+      id: jacoco
+      uses: madrapps/jacoco-report@v1.1
+      with:
+        path: target/site/jacoco/jacoco.xml
+        token: ${{ secrets.GITHUB_TOKEN }}
+        min-coverage-overall: 40
+        min-coverage-changed-files: 60
