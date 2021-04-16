@@ -12,7 +12,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2         # checkout the repo
       - name: Run Maven Test
-        run: docker run -t --rm -v $PWD:/data -w /data maven:3-openjdk-8-slim mvn clean test -q
+        run: docker run -t --rm -v $PWD:/data -w /data maven:3-openjdk-8-slim mvn clean test -q -T 4
       - uses: actions/upload-artifact@v2  # upload test results
         if: success() || failure()        # run this step even if previous step failed
         with:
