@@ -1,12 +1,12 @@
 package com.shipout.dao
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page
+import com.baomidou.mybatisplus.extension.plugins.pagination.*
 import com.fasterxml.jackson.databind.*
 import com.shipout.*
 import com.shipout.entity.*
 import groovy.sql.*
 import org.springframework.beans.factory.annotation.*
-import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer
+import org.springframework.boot.test.context.*
 import org.springframework.test.context.*
 import spock.lang.*
 
@@ -74,6 +74,16 @@ class UserMapperTest extends Specification {
         def rows = sql.rows("select * from t_user")
         rows.size() == 1
         println objectMapper.writeValueAsString(rows)
+    }
+
+    def "插入数据测试 null"() {
+
+
+        when:
+        userMapper.insertUser(null)
+        then:
+        def rows = sql.rows("select * from t_user")
+        rows.size() == 0
     }
 
     def "查询数据测试"() {

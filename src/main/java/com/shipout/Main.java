@@ -1,4 +1,4 @@
-package com.shipout.main;
+package com.shipout;
 
 import com.shipout.dao.UserMapper;
 import org.mybatis.spring.annotation.MapperScan;

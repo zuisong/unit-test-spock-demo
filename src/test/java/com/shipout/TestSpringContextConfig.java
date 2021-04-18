@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.autoconfigure.gson.GsonAutoConfiguration;
 import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
@@ -17,10 +16,7 @@ import org.springframework.boot.autoconfigure.transaction.TransactionAutoConfigu
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.io.Resource;
-import org.springframework.jdbc.datasource.init.DataSourceInitializer;
-import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
-
+import org.springframework.boot.autoconfigure.sql.init.SqlInitializationAutoConfiguration;
 import javax.sql.DataSource;
 
 /**
@@ -35,6 +31,7 @@ import javax.sql.DataSource;
 public class TestSpringContextConfig {
 
     @ImportAutoConfiguration(classes = {
+            SqlInitializationAutoConfiguration.class,
             DataSourceAutoConfiguration.class,
             MybatisPlusAutoConfiguration.class,
             TransactionAutoConfiguration.class,
@@ -60,15 +57,5 @@ public class TestSpringContextConfig {
 
     @Autowired
     DataSource dataSource;
-
-    @Bean
-    public DataSourceInitializer dataSourceInitializer(
-            @Value("classpath:schema-h2.sql") Resource schemaScript
-    ) {
-        DataSourceInitializer initializer = new DataSourceInitializer();
-        initializer.setDataSource(dataSource);
-        initializer.setDatabasePopulator(new ResourceDatabasePopulator(schemaScript));
-        return initializer;
-    }
 
 }

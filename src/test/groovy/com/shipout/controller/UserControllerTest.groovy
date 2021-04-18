@@ -1,7 +1,7 @@
 package com.shipout.controller
 
 import com.fasterxml.jackson.databind.*
-import com.shipout.controller.*
+import com.google.gson.*
 import com.shipout.entity.*
 import com.shipout.service.*
 import org.springframework.http.*
@@ -14,16 +14,18 @@ import spock.lang.*
 import java.nio.charset.*
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*
 
 class UserControllerTest extends Specification {
     UserService userService = Mock(UserService)
 
-    MockMvc mockMvc = standaloneSetup(new UserController(userService: userService)).build()
 
     ObjectMapper mapper = new ObjectMapper()
 
     def "查询用户列表测试"() {
+        def userController = new UserController(userService: userService)
+        MockMvc mockMvc = standaloneSetup(userController).build()
         when: "calling web service and get a response"
 
         def result = mockMvc
@@ -40,31 +42,35 @@ class UserControllerTest extends Specification {
                 .response
         response.getStatus() == 200
         1 * userService.getUserList() >> [new User()]
-        result.andExpect {
-            MockMvcResultMatchers.jsonPath("\$.code")
+        result.andExpect(jsonPath("\$.code").value(0))
+        result.andExpect(jsonPath("\$.data").hasJsonPath())
+        result.andExpect(jsonPath("\$.data..id").hasJsonPath())
 
-                    .value(0).match(it)
-        };
-        response.getContentAsString(StandardCharsets.UTF_8) == '{"code":0,"data":[{"id":null,"name":null}],"msg":"执行成功"}'
+        response.getContentAsString(StandardCharsets.UTF_8) == '{"code":0,"data":[{"id":null,"name":null}],"msg":"success"}'
     }
 
     def "插入用户测试"() {
         when: "MockMvcWebTestClient 测试"
 
+
+        def userController = new UserController(userService: userService)
         WebTestClient client = MockMvcWebTestClient
-                .bindToController(new UserController(userService: userService))
+                .bindToController(userController)
                 .build();
 
         client.post()
                 .uri("/user/addUser")
-                .bodyValue(mapper.writeValueAsString(new User()))
+                .bodyValue(new Gson().newBuilder().serializeNulls().create().toJson(new User()))
                 .headers {
                     it.setContentType(MediaType.APPLICATION_JSON)
                 }
                 .exchange()
                 .expectStatus().is2xxSuccessful()
-                .expectBody().jsonPath('$.code').isEqualTo(0)
+                .expectBody()
                 .consumeWith(System.out::println)
+                .jsonPath('$.code').isEqualTo(0)
+                .jsonPath('$.data').isEmpty()
+                .jsonPath('$.msg').isNotEmpty()
 
 
         then:
