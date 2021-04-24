@@ -10,9 +10,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 @MapperScan("com.shipout.dao")
 public class Main {
 
-    public static void main(String[] args) throws Exception {
-
-
+    public static void main(String[] args) {
         ConfigurableApplicationContext applicationContext = SpringApplication.run(Main.class);
 
         UserMapper userMapper = applicationContext.getBean(UserMapper.class);

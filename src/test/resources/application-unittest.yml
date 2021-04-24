@@ -5,6 +5,8 @@ spring:
     username: sa
     password:
     url: jdbc:h2:mem:testDB;MODE=mysql;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    schema:
+      - classpath*:schema-h2.sql
   sql:
     init:
       schema-locations:

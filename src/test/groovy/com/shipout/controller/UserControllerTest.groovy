@@ -19,44 +19,42 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*
 
 class UserControllerTest extends Specification {
     UserService userService = Mock(UserService)
-
-
-    ObjectMapper mapper = new ObjectMapper()
+    def userController = new UserController(userService: userService)
 
     def "查询用户列表测试"() {
-        def userController = new UserController(userService: userService)
+        given:"初始化环境"
         MockMvc mockMvc = standaloneSetup(userController).build()
         when: "calling web service and get a response"
 
-        def result = mockMvc
+        mockMvc
                 .perform(get("/user/list")
                         .contentType(MediaType.APPLICATION_JSON)
                         .characterEncoding(StandardCharsets.UTF_8.toString())
                 )
                 .andDo(MockMvcResultHandlers.log())
+                .with { it ->
+                    [status().is2xxSuccessful(),
+                     jsonPath('$.code').value(0),
+                     jsonPath('$.data').hasJsonPath(),
+                     jsonPath('$.data..id').hasJsonPath(),
+                     content().json('{"code":0,"data":[{"id":null,"name":null}],"msg":"success"}'),
+                    ].forEach it::andExpect
+                }
 
         then: "expect that a valid response occurs ..."
-        def response = result
 
-                .andReturn()
-                .response
-        response.getStatus() == 200
+
         1 * userService.getUserList() >> [new User()]
-        result.andExpect(jsonPath("\$.code").value(0))
-        result.andExpect(jsonPath("\$.data").hasJsonPath())
-        result.andExpect(jsonPath("\$.data..id").hasJsonPath())
 
-        response.getContentAsString(StandardCharsets.UTF_8) == '{"code":0,"data":[{"id":null,"name":null}],"msg":"success"}'
+
     }
 
     def "插入用户测试"() {
-        when: "MockMvcWebTestClient 测试"
-
-
-        def userController = new UserController(userService: userService)
+        given: "初始化环境"
         WebTestClient client = MockMvcWebTestClient
                 .bindToController(userController)
                 .build();
+        when: "MockMvcWebTestClient 测试"
 
         client.post()
                 .uri("/user/addUser")
@@ -65,12 +63,22 @@ class UserControllerTest extends Specification {
                     it.setContentType(MediaType.APPLICATION_JSON)
                 }
                 .exchange()
-                .expectStatus().is2xxSuccessful()
+                .expectHeader()
+                .with {
+                    it.contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
+                }
+                .expectStatus()
+                .with {
+                    it.is2xxSuccessful()
+                }
                 .expectBody()
-                .consumeWith(System.out::println)
-                .jsonPath('$.code').isEqualTo(0)
-                .jsonPath('$.data').isEmpty()
-                .jsonPath('$.msg').isNotEmpty()
+                .with {
+                    it.consumeWith { println(it) }
+                    it.jsonPath('$.code').isEqualTo(0)
+                    it.jsonPath('$.data').isEmpty()
+                    it.jsonPath('$.msg').isNotEmpty()
+                }
+                .returnResult()
 
 
         then:

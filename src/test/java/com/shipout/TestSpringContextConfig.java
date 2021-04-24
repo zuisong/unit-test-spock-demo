@@ -16,7 +16,7 @@ import org.springframework.boot.autoconfigure.transaction.TransactionAutoConfigu
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.boot.autoconfigure.sql.init.SqlInitializationAutoConfiguration;
+
 import javax.sql.DataSource;
 
 /**
@@ -31,7 +31,6 @@ import javax.sql.DataSource;
 public class TestSpringContextConfig {
 
     @ImportAutoConfiguration(classes = {
-            SqlInitializationAutoConfiguration.class,
             DataSourceAutoConfiguration.class,
             MybatisPlusAutoConfiguration.class,
             TransactionAutoConfiguration.class,
@@ -43,7 +42,6 @@ public class TestSpringContextConfig {
     static class AutoConfig {
 
     }
-
 
     /**
      * 新的分页插件,一缓和二缓遵循mybatis的规则,需要设置 MybatisConfiguration#useDeprecatedExecutor = false 避免缓存出现问题(该属性会在旧插件移除后一同移除)
