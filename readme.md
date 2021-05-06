@@ -1,4 +1,5 @@
 # 单元测试 spock 实战
+转载自 [使用Spock框架进行单元测试](http://blog.2baxb.me/archives/1398)
 
 ## 1 摘要
 
