@@ -1,6 +1,5 @@
 # 开始构建
 FROM maven:3-openjdk-8-slim As builder
-MAINTAINER zuisong
 USER root
 RUN mkdir -p /mydata
 COPY . /mydata
@@ -8,8 +7,7 @@ WORKDIR /mydata
 RUN mvn clean test package -DfinalName=app -q
 
 # 构建完毕
-FROM frolvlad/alpine-java:jre8-slim
-MAINTAINER zuisong
+FROM azul/zulu-openjdk:8
 USER root
 RUN mkdir -p /data
 VOLUME /data
