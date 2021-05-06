@@ -1,13 +1,12 @@
 package com.shipout.controller
 
-import com.fasterxml.jackson.databind.*
-import com.google.gson.*
+
 import com.shipout.entity.*
 import com.shipout.service.*
+import io.restassured.http.*
+import io.restassured.module.mockmvc.*
 import org.springframework.http.*
-import org.springframework.test.web.reactive.server.*
 import org.springframework.test.web.servlet.*
-import org.springframework.test.web.servlet.client.*
 import org.springframework.test.web.servlet.result.*
 import spock.lang.*
 
@@ -20,10 +19,10 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.*
 class UserControllerTest extends Specification {
     UserService userService = Mock(UserService)
     def userController = new UserController(userService: userService)
+    MockMvc mockMvc = standaloneSetup(userController).build()
 
     def "查询用户列表测试"() {
-        given:"初始化环境"
-        MockMvc mockMvc = standaloneSetup(userController).build()
+        given: "初始化环境"
         when: "calling web service and get a response"
 
         mockMvc
@@ -51,34 +50,28 @@ class UserControllerTest extends Specification {
 
     def "插入用户测试"() {
         given: "初始化环境"
-        WebTestClient client = MockMvcWebTestClient
-                .bindToController(userController)
-                .build();
+
+        RestAssuredMockMvc.reset()
+        RestAssuredMockMvc.resultHandlers(MockMvcResultHandlers.log())
+        RestAssuredMockMvc.mockMvc(mockMvc)
+
         when: "MockMvcWebTestClient 测试"
 
-        client.post()
-                .uri("/user/addUser")
-                .bodyValue(new Gson().newBuilder().serializeNulls().create().toJson(new User()))
-                .headers {
-                    it.setContentType(MediaType.APPLICATION_JSON)
-                }
-                .exchange()
-                .expectHeader()
-                .with {
-                    it.contentTypeCompatibleWith(MediaType.APPLICATION_JSON)
-                }
-                .expectStatus()
-                .with {
-                    it.is2xxSuccessful()
-                }
-                .expectBody()
-                .with {
-                    it.consumeWith { println(it) }
-                    it.jsonPath('$.code').isEqualTo(0)
-                    it.jsonPath('$.data').isEmpty()
-                    it.jsonPath('$.msg').isNotEmpty()
-                }
-                .returnResult()
+        def result = RestAssuredMockMvc.given()
+                .body(new User())
+                .contentType(ContentType.JSON)
+                .post("/user/addUser")
+
+        then:
+        result.contentType == MediaType.APPLICATION_JSON_VALUE
+
+        result.statusCode() == 200
+
+        result.jsonPath().with {
+            it.getInt('code') == 0
+            it.getString('data') == null
+            !it.getString('msg').isBlank()
+        }
 
 
         then:
