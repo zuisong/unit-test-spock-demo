@@ -10,24 +10,9 @@ jobs:
   build-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2         # checkout the repo
-      - name: Run Maven Test
-        run: docker run -t --rm -v $PWD:/data -w /data maven:3-openjdk-8-slim mvn clean test -q -T 4
-      - uses: actions/upload-artifact@v2  # upload test results
-        if: success() || failure()        # run this step even if previous step failed
+      - uses: actions/checkout@v2
+      - uses: actions/setup-java@v2
         with:
-          name: test-results
-          path: target/
-      - name: Publish Test Report
-        uses: mikepenz/action-junit-report@v2
-        with:
-          report_paths: '**/target/surefire-reports/TEST-*.xml'
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-      - name: Add coverage to PR
-        id: jacoco
-        uses: madrapps/jacoco-report@v1.1
-        with:
-          path: target/site/jacoco/jacoco.xml
-          token: ${{ secrets.GITHUB_TOKEN }}
-          min-coverage-overall: 40
-          min-coverage-changed-files: 60
+          distribution: 'zulu'
+          java-version: '8'
+      - run: ./mvnw clean test

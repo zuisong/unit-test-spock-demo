@@ -15,6 +15,7 @@
         <spock-bom.version>2.0-M5-groovy-3.0</spock-bom.version>
         <spring-boot-dependencies.version>2.4.5</spring-boot-dependencies.version>
         <groovy-bom.version>3.0.8</groovy-bom.version>
+        <testcontainers-bom.version>1.15.3</testcontainers-bom.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -33,14 +34,9 @@
                 <scope>import</scope>
             </dependency>
             <dependency>
-                <groupId>net.java.dev.jna</groupId>
-                <artifactId>jna</artifactId>
-                <version>5.8.0</version>
-            </dependency>
-            <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers-bom</artifactId>
-                <version>1.15.3</version>
+                <version>${testcontainers-bom.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -50,6 +46,11 @@
                 <version>${spock-bom.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>net.java.dev.jna</groupId>
+                <artifactId>jna</artifactId>
+                <version>5.8.0</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -113,6 +114,7 @@
         <dependency>
             <groupId>io.rest-assured</groupId>
             <artifactId>spring-mock-mvc</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>
