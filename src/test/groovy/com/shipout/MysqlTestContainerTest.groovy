@@ -8,31 +8,30 @@ import org.testcontainers.utility.*
 import spock.lang.*
 
 @Testcontainers
+@Requires({ env.test_env == 'docker' })
 class MysqlTestContainerTest extends Specification {
-    Sql sql
 
-    def setup() {
-        JdbcDatabaseContainer dbContainer = new MySQLContainer(DockerImageName
-                .parse("mysql/mysql-server")
-                .asCompatibleSubstituteFor("mysql"))
-                .withDatabaseName("foo")
-                .withUsername("foo")
-                .withPassword("secret")
-        dbContainer.start()
-        sql = Sql.newInstance(dbContainer.jdbcUrl, dbContainer.username, dbContainer.password)
-    }
+    @Shared
+    JdbcDatabaseContainer dbContainer = new MySQLContainer(DockerImageName
+            .parse("mysql/mysql-server")
+            .asCompatibleSubstituteFor("mysql"))
+            .withDatabaseName("foo")
+            .withUsername("foo")
+            .withPassword("secret")
+    Sql sql = Sql.newInstance(dbContainer.jdbcUrl, dbContainer.username, dbContainer.password)
 
-    def "waits until databases accepts jdbc connections"() {
+
+    def "waits until databases accepts jdbc 1"() {
         when:
-        def res = sql.firstRow("select now()")
+        def res = sql.firstRow(" select now() as now ")
 
         then: "result is returned"
         println(res)
     }
 
-    def "waits until databases accepts jdbc connections2"() {
+    def "waits until databases accepts jdbc"() {
         when:
-        def res = sql.firstRow("select now() as now")
+        def res = sql.firstRow(" select now() as now ")
 
         then: "result is returned"
         println(res)

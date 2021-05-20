@@ -13,23 +13,38 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.shipout.base;
+package com.shipout.base
 
 /**
- * REST API 错误码接口
+ * REST API 错误码
  *
  * @author hubin
- * @since 2018-06-05
+ * @since 2017-06-26
  */
-public interface IErrorCode {
+enum class ApiErrorCode(override val code: Long, override val msg: String) : IErrorCode {
+    /**
+     * 失败
+     */
+    FAILED(-1, "failed"),
 
     /**
-     * 错误编码 -1、失败 0、成功
+     * 成功
      */
-    long getCode();
+    SUCCESS(0, "success");
 
-    /**
-     * 错误描述
-     */
-    String getMsg();
+    override fun toString(): String {
+        return String.format(" ErrorCode:{code=%s, msg=%s} ", code, msg)
+    }
+
+    companion object {
+        fun fromCode(code: Long): ApiErrorCode {
+            val ecs = values()
+            for (ec in ecs) {
+                if (ec.code == code) {
+                    return ec
+                }
+            }
+            return SUCCESS
+        }
+    }
 }

@@ -13,8 +13,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.shipout.base;
-
+package com.shipout.base
 
 /**
  * REST API 请求异常类
@@ -22,36 +21,25 @@ package com.shipout.base;
  * @author hubin
  * @since 2017-06-26
  */
-public class ApiException extends RuntimeException {
-
-    /**
-     * serialVersionUID
-     */
-    private static final long serialVersionUID = -5885155226898287919L;
-
+class ApiException : RuntimeException {
     /**
      * 错误码
      */
-    private IErrorCode errorCode;
+    var errorCode: IErrorCode? = null
+        private set
 
-    public ApiException(IErrorCode errorCode) {
-        super(errorCode.getMsg());
-        this.errorCode = errorCode;
+    constructor(errorCode: IErrorCode) : super(errorCode.msg) {
+        this.errorCode = errorCode
     }
 
-    public ApiException(String message) {
-        super(message);
-    }
+    constructor(message: String?) : super(message) {}
+    constructor(cause: Throwable?) : super(cause) {}
+    constructor(message: String?, cause: Throwable?) : super(message, cause) {}
 
-    public ApiException(Throwable cause) {
-        super(cause);
-    }
-
-    public ApiException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public IErrorCode getErrorCode() {
-        return errorCode;
+    companion object {
+        /**
+         * serialVersionUID
+         */
+        private const val serialVersionUID = -5885155226898287919L
     }
 }

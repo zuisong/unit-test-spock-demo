@@ -28,12 +28,11 @@ class UserMapperTest extends Specification {
 
     @Autowired
     UserMapper userMapper
-    @Shared
+
+    @Autowired
     Sql sql
 
     def setup() {
-        sql = new Sql(dataSource)
-
         println "------- setup"
         sql.execute("""
         truncate table t_user;
@@ -42,7 +41,6 @@ class UserMapperTest extends Specification {
 
 
     def setupSpec() {
-
         // 设置每个测试类的环境
         // 每个测试类初始化时会被执行一遍
         println("-------- setupSpec")
@@ -65,29 +63,16 @@ class UserMapperTest extends Specification {
 
 
     def "插入数据测试"() {
-
-
-        def user = Stub(User)
+        def user = new User(id:1,name: "zhangsan")
         when:
-        userMapper.insertUser(user)
+        userMapper.insertUserNotNull(user)
         then:
         def rows = sql.rows("select * from t_user")
         rows.size() == 1
         println objectMapper.writeValueAsString(rows)
     }
 
-    def "插入数据测试 null"() {
-
-
-        when:
-        userMapper.insertUser(null)
-        then:
-        def rows = sql.rows("select * from t_user")
-        rows.size() == 0
-    }
-
     def "查询数据测试"() {
-
         // 这里可以初始 插入一些数据
         setup:
         sql.execute("""
@@ -113,7 +98,6 @@ class UserMapperTest extends Specification {
 
         when:
         userMapper.batchSaveUser([user1, user2, user3])
-
 
         then:
         def row = sql.firstRow("select count(*) as count from t_user ")
