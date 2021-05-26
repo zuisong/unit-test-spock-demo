@@ -37,3 +37,7 @@ jobs:
         run: |
           echo "Total coverage ${{ steps.jacoco.outputs.coverage-overall }}"
           echo "Changed Files coverage ${{ steps.jacoco.outputs.coverage-changed-files }}"
+
+      - uses: codecov/codecov-action@v1
+        with:
+          fail_ci_if_error: false
