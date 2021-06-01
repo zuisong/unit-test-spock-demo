@@ -49,9 +49,7 @@ class TestSpringContextConfig {
     }
 
     @Bean
-    fun sql(dataSource: DataSource): Sql {
-        return Sql(dataSource)
-    }
+    fun sql(dataSource: DataSource) = Sql(dataSource)
 
     @Bean
     @ConditionalOnExpression("#{'docker'.equals(environment.getProperty('test_env'))}")
@@ -89,7 +87,7 @@ class TestSpringContextConfig {
     @Bean
     fun dataSourceInitializer(
         dataSource: DataSource,
-        @Value("classpath:db-schema.sql") schemaScript: Resource?
+        @Value("classpath:db-schema.sql") schemaScript: Resource
     ): DataSourceInitializer {
         val initializer = DataSourceInitializer()
         initializer.setDataSource(dataSource)

@@ -2,6 +2,7 @@ package com.shipout.controller
 
 import com.shipout.entity.*
 import com.shipout.service.*
+import groovy.json.*
 import io.restassured.http.*
 import io.restassured.module.mockmvc.*
 import org.springframework.http.*
@@ -37,7 +38,19 @@ class UserControllerTest extends Specification {
             get('data') != null
             get('data[0].id') == 1
         }
-        response.getBody().asString() == '{"code":0,"data":[{"id":1,"name":null}],"msg":"success"}'
+
+        def jsonSlurper = new JsonSlurper()
+
+        response.getBody().jsonPath().get() == jsonSlurper.parseText('''{
+  "code": 0,
+  "data": [
+    {
+      "id": 1,
+      "name": null
+    }
+  ],
+  "msg": "success"
+}''')
 
         then: "expect that a valid response occurs ..."
 
