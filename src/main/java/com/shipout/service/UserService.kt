@@ -13,7 +13,7 @@ import java.util.concurrent.*
 @Service
 class UserService {
     @Autowired
-    private var userMapper: UserMapper? = null
+    private lateinit var userMapper: UserMapper
 
     @Autowired
     private lateinit var stringRedisTemplate: StringRedisTemplate
@@ -22,14 +22,14 @@ class UserService {
     private lateinit var objectMapper: ObjectMapper
     fun findUserById(id: Int): User? {
         return try {
-            var userString = stringRedisTemplate.opsForValue()[id]
-            if (Objects.isNull(userString)) {
-                val user = userMapper!!.selectById(id)
-                userString = objectMapper!!.writeValueAsString(user)
+            var userString: String? = stringRedisTemplate.opsForValue().get(id)
+            if (null == userString) {
+                val user = userMapper.selectById(id)
+                userString = objectMapper.writeValueAsString(user)!!
                 stringRedisTemplate.opsForValue().set(id.toString(), userString, 10, TimeUnit.MINUTES)
                 user
             } else {
-                objectMapper!!.readValue(userString, User::class.java)
+                objectMapper.readValue(userString, User::class.java)
             }
         } catch (e: JsonProcessingException) {
             e.printStackTrace()
@@ -37,5 +37,5 @@ class UserService {
         }
     }
 
-    fun getUserList(): List<User> = userMapper!!.selectList(null)
+    fun getUserList(): List<User> = userMapper.selectList(null)
 }
