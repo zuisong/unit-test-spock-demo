@@ -12,12 +12,11 @@ class UserController {
     @Autowired
     private lateinit var userService: UserService
 
-    @get:GetMapping("/list")
-    val userList: R<List<User>?>
-        get() {
-            val userList = userService.getUserList()
-            return R.Companion.ok<List<User>?>(userList)
-        }
+    @GetMapping("/list")
+    fun getUserList(): R<List<User>?> {
+        val userList = userService.getUserList()
+        return R.Companion.ok<List<User>?>(userList)
+    }
 
     @GetMapping("/getById")
     fun getUserById(id: Int): R<User?> {
