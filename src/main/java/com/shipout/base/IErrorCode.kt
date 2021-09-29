@@ -25,7 +25,7 @@ interface IErrorCode {
     /**
      * 错误编码 -1、失败 0、成功
      */
-    val code: Long
+    val code: Int
 
     /**
      * 错误描述

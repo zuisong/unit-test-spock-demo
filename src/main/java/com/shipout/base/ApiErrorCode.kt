@@ -21,7 +21,7 @@ package com.shipout.base
  * @author hubin
  * @since 2017-06-26
  */
-enum class ApiErrorCode(override val code: Long, override val msg: String) : IErrorCode {
+enum class ApiErrorCode(override val code: Int, override val msg: String) : IErrorCode {
     /**
      * 失败
      */
@@ -37,7 +37,7 @@ enum class ApiErrorCode(override val code: Long, override val msg: String) : IEr
     }
 
     companion object {
-        fun fromCode(code: Long): ApiErrorCode {
+        fun fromCode(code: Int): ApiErrorCode {
             val ecs = values()
             for (ec in ecs) {
                 if (ec.code == code) {

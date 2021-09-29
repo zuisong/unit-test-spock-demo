@@ -16,7 +16,7 @@
         <spring-boot.version>2.5.2</spring-boot.version>
         <groovy-bom.version>3.0.8</groovy-bom.version>
         <testcontainers-bom.version>1.15.3</testcontainers-bom.version>
-        <kotlin.version>1.5.20</kotlin.version>
+        <kotlin.version>1.5.30</kotlin.version>
         <junit-bom.version>5.7.2</junit-bom.version>
     </properties>
     <dependencyManagement>

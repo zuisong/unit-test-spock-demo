@@ -13,10 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
+
 package com.shipout.base
 
 import java.io.*
-import java.util.*
 
 /**
  * REST API 返回结果
@@ -24,34 +24,25 @@ import java.util.*
  * @author hubin
  * @since 2018-06-05
  */
-class R<T> : Serializable {
+@Suppress("MemberVisibilityCanBePrivate")
+data class R<T>(
     /**
      * 业务错误码
      */
-    var code: Long = 0
+    val code: Int,
 
     /**
      * 结果集
      */
-    private var data: T? = null
+    val data: T?,
 
     /**
      * 描述
      */
-    var msg: String? = null
+    val msg: String? = null,
+) : Serializable {
 
-    constructor() {
-        // to do nothing
-    }
-
-    constructor(errorCode: IErrorCode) {
-        var errorCode = errorCode
-        errorCode = Optional.ofNullable(errorCode).orElse(ApiErrorCode.FAILED)
-        this.code = errorCode.code
-        msg = errorCode.msg
-    }
-
-    fun ok(): Boolean {
+    fun success(): Boolean {
         return ApiErrorCode.SUCCESS.code == code
     }
 
@@ -59,52 +50,10 @@ class R<T> : Serializable {
      * 服务间调用非业务正常，异常直接释放
      */
     fun serviceData(): T? {
-        if (!ok()) {
+        if (!success()) {
             throw ApiException(msg)
         }
         return data
-    }
-
-    fun getData(): T? {
-        return data
-    }
-
-    fun setData(data: T) {
-        this.data = data
-    }
-
-    override fun equals(o: Any?): Boolean {
-        if (o === this) return true
-        if (o !is R<*>) return false
-        val other = o
-        if (!other.canEqual(this)) return false
-        if (this.code != other.code) return false
-        val `this$data`: Any? = getData()
-        val `other$data` = other.getData()
-        if (if (`this$data` == null) `other$data` != null else `this$data` != `other$data`) return false
-        val `this$msg`: Any? = msg
-        val `other$msg`: Any? = other.msg
-        return if (`this$msg` == null) `other$msg` == null else `this$msg` == `other$msg`
-    }
-
-    protected fun canEqual(other: Any?): Boolean {
-        return other is R<*>
-    }
-
-    override fun hashCode(): Int {
-        val PRIME = 59
-        var result = 1
-        val `$code` = this.code
-        result = result * PRIME + (`$code` ushr 32 xor `$code`).toInt()
-        val `$data`: Any? = getData()
-        result = result * PRIME + (`$data`?.hashCode() ?: 43)
-        val `$msg`: Any? = msg
-        result = result * PRIME + (`$msg`?.hashCode() ?: 43)
-        return result
-    }
-
-    override fun toString(): String {
-        return "R(code=" + this.code + ", data=" + getData() + ", msg=" + msg + ")"
     }
 
     companion object {
@@ -112,6 +61,8 @@ class R<T> : Serializable {
          * serialVersionUID
          */
         private const val serialVersionUID = 1L
+
+        @JvmStatic
         fun <T> ok(data: T): R<T?> {
             var aec = ApiErrorCode.SUCCESS
             if (data is Boolean && java.lang.Boolean.FALSE == data) {
@@ -120,24 +71,22 @@ class R<T> : Serializable {
             return restResult(data, aec)
         }
 
+        @JvmStatic
         fun <T> failed(msg: String?): R<T?> {
             return restResult(null, ApiErrorCode.FAILED.code, msg)
         }
 
+        @JvmStatic
         fun <T> failed(errorCode: IErrorCode): R<T?> {
             return restResult(null, errorCode)
         }
 
+        @JvmStatic
         fun <T> restResult(data: T?, errorCode: IErrorCode): R<T?> {
             return restResult(data, errorCode.code, errorCode.msg)
         }
 
-        private fun <T> restResult(data: T?, code: Long, msg: String?): R<T?> {
-            val apiResult = R<T?>()
-            apiResult.code = code
-            apiResult.setData(data)
-            apiResult.msg = msg
-            return apiResult
-        }
+        private fun <T> restResult(data: T?, code: Int, msg: String?): R<T?> =
+            R<T?>(code = code, data = data, msg = msg)
     }
 }

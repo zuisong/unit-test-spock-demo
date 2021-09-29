@@ -15,17 +15,17 @@ class UserController {
     @GetMapping("/list")
     fun getUserList(): R<List<User>?> {
         val userList = userService.getUserList()
-        return R.Companion.ok<List<User>?>(userList)
+        return R.ok<List<User>?>(userList)
     }
 
     @GetMapping("/getById")
     fun getUserById(id: Int): R<User?> {
-        val user = userService!!.findUserById(id)
-        return R.Companion.ok<User?>(user)
+        val user = userService.findUserById(id)
+        return R.ok(user)
     }
 
     @PostMapping("/addUser")
     fun addUser(@RequestBody user: User?): R<User?> {
-        return R.Companion.ok<User?>(null)
+        return R.ok(null)
     }
 }
