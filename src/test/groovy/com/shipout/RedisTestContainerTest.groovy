@@ -15,14 +15,14 @@ class RedisTestContainerTest extends Specification {
 
     static int redis_port = 6379
 
+
+    GenericContainer container = new GenericContainer("redis:alpine")
+            .withExposedPorts(redis_port)
+
+
     def setup() {
-
-        def container = new GenericContainer("redis:6-alpine")
-                .withExposedPorts(redis_port)
-
-        container.start()
-
         RedisConnectionFactory connectionFactory = new LettuceConnectionFactory(container.host, container.getMappedPort(redis_port))
+        connectionFactory.afterPropertiesSet()
         redisTemplate = new StringRedisTemplate(connectionFactory)
     }
     StringRedisTemplate redisTemplate

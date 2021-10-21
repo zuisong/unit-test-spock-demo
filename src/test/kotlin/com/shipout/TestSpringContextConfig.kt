@@ -31,10 +31,10 @@ import javax.sql.*
 @TestConfiguration
 @EnableConfigurationProperties(DataSourceProperties::class)
 @MapperScan(basePackages = ["com.shipout"])
-class TestSpringContextConfig {
+open class TestSpringContextConfig {
     @ImportAutoConfiguration(classes = [MybatisPlusAutoConfiguration::class, TransactionAutoConfiguration::class, JacksonAutoConfiguration::class, GsonAutoConfiguration::class, JooqAutoConfiguration::class])
     @TestConfiguration
-    internal class AutoConfig
+    internal open class AutoConfig
 
     /**
      * 新的分页插件,一缓和二缓遵循mybatis的规则,需要设置
@@ -42,18 +42,18 @@ class TestSpringContextConfig {
      * 避免缓存出现问题(该属性会在旧插件移除后一同移除)
      */
     @Bean
-    fun mybatisPlusInterceptor(): MybatisPlusInterceptor {
+    open fun mybatisPlusInterceptor(): MybatisPlusInterceptor {
         val interceptor = MybatisPlusInterceptor()
         interceptor.addInnerInterceptor(PaginationInnerInterceptor(DbType.H2))
         return interceptor
     }
 
     @Bean
-    fun sql(dataSource: DataSource) = Sql(dataSource)
+    open fun sql(dataSource: DataSource) = Sql(dataSource)
 
     @Bean
     @ConditionalOnExpression("#{'docker'.equals(environment.getProperty('test_env'))}")
-    fun dockerMysqlDataSource(): DataSource {
+    open fun dockerMysqlDataSource(): DataSource {
         val dbContainer: JdbcDatabaseContainer<*> =
             MySQLContainer<MySQLContainer<*>>(
                 DockerImageName
@@ -75,7 +75,7 @@ class TestSpringContextConfig {
     // 数据源初始化
     @Bean
     @ConditionalOnExpression("#{!'docker'.equals(environment.getProperty('test_env'))}")
-    fun h2DataSource(): DataSource {
+    open fun h2DataSource(): DataSource {
         val config = HikariConfig()
         config.jdbcUrl = "jdbc:h2:mem:c11n;MODE=mysql;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE"
         config.driverClassName = "org.h2.Driver"
@@ -85,7 +85,7 @@ class TestSpringContextConfig {
     }
 
     @Bean
-    fun dataSourceInitializer(
+    open fun dataSourceInitializer(
         dataSource: DataSource,
         @Value("classpath:db-schema.sql") schemaScript: Resource
     ): DataSourceInitializer {
