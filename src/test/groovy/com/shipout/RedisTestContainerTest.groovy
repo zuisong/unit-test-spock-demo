@@ -16,8 +16,8 @@ class RedisTestContainerTest extends Specification {
     static int redis_port = 6379
 
 
-    GenericContainer container = new GenericContainer("redis:alpine")
-            .withExposedPorts(redis_port)
+        GenericContainer container = new GenericContainer("zuisong-docker.pkg.coding.net/mirrors/docker/redis:alpine")
+                .withExposedPorts(redis_port)
 
 
     def setup() {

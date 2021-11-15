@@ -13,7 +13,7 @@ class MysqlTestContainerTest extends Specification {
 
     @Shared
     JdbcDatabaseContainer dbContainer = new MySQLContainer(DockerImageName
-            .parse("mysql/mysql-server")
+            .parse("zuisong-docker.pkg.coding.net/mirrors/docker/mysql/mysql-server")
             .asCompatibleSubstituteFor("mysql"))
             .withDatabaseName("foo")
             .withUsername("foo")
